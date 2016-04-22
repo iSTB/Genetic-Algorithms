@@ -1,14 +1,14 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-
+import schematax as sx
 
 def all_ones(indv):
     return indv.count('1')
 
 
 
-class GA(object):
+class SA(object):
 
     def __init__(self,func = all_ones,n=10,p=16,mu=0.1,s=0,e=False):
         """
@@ -25,7 +25,7 @@ class GA(object):
         self.mu = mu
         self.s = s
         self.e = e
-
+        self.schemata =[]
 
         self.pop = [] #current pop go here
         self.best = '' #stores best overall indivdual
@@ -74,8 +74,6 @@ class GA(object):
         self.bests.append(bestp)
         self.av_f.append(np.mean(self.fs.values()))
 
-
-
     def roulette_wheel(self):
         max = sum(self.fs.values())
 
@@ -94,9 +92,18 @@ class GA(object):
             return self.roulette_wheel()
 
 
+    def get_good_schemata(self):
+        meanf = np.mean([s.fit for s in self.schemata])
+        meano = np.mean([s.get_order() for s in selfschemata]))
+
+        self.good = [s for s in self.schemata if s.get_order() >= meano and s.fit >= meanfit]
+    
+            
+
+
     def make_next_gen(self):
         self.eval_pop()
-
+        self.schemata = sx.complete(self.pop,func=self.func)
         new = []
         if self.e:
             new.append(self.bests[-1])
@@ -105,12 +112,7 @@ class GA(object):
             dad = self.select()
 
             new +=  [self.mutate(x) for x in self.crossover(mum,dad)]
-                        
-
-
         self.pop = new
-
-
 
     def run(self,steps=100):
         self.init_pop()
